@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import infer
-from mnist_conf import Conf
+from cifar10_conf import Conf
 
 def train(c):
     x = tf.placeholder(tf.float32, shape=(None,) + c.image_shape,  name="input-x")

@@ -1,7 +1,7 @@
 import tensorflow as tf
 import time
 import infer
-from mnist_conf import Conf
+from cifar10_conf import Conf
 
 interval = 5
 def evaluate(c):
