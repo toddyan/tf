@@ -1,0 +1,17 @@
+import tensorflow as tf
+step = tf.Variable(0,trainable=False)
+v    = tf.Variable(0, dtype=tf.float32)
+ema  = tf.train.ExponentialMovingAverage(0.99,num_updates=step)
+emaUpdate = ema.apply([v])
+with tf.Session() as sess:
+    tf.global_variables_initializer().run()
+    sess.run(emaUpdate)
+    print(sess.run([v,ema.average(v)]))
+    sess.run(tf.assign(v,5))
+    sess.run(emaUpdate)
+    print(sess.run([v, ema.average(v)]))
+    sess.run([tf.assign(step,10000), tf.assign(v,10)])
+    sess.run(emaUpdate)
+    print(sess.run([v, ema.average(v)]))
+    emaUpdate.run()
+    print(sess.run([v, ema.average(v)]))
