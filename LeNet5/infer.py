@@ -42,6 +42,6 @@ def infer(conf, x, train, regularizer):
             logit = tf.matmul(a, w) + b
             if i + 1 != len(conf.fc_layers):
                 a = tf.nn.relu(logit)
-                if train: a = tf.nn.dropout(a, 0.5)
+                if train: a = tf.nn.dropout(a, keep_prob=0.8)
         prev_layer = layer
     return logit
