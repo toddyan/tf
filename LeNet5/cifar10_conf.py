@@ -7,9 +7,9 @@ class Conf:
         # structure
         self.image_shape  = (32,32,3)
         self.classes      = 10
-        self.conv_layers  = [ConvLayer((5,5,3,8), (1,1,1,1), (1,2,2,1), (1,2,2,1)),
-                             ConvLayer((5,5,8,16),(1,1,1,1),(1,2,2,1),(1,2,2,1))]
-        self.fc_layers    = [128, self.classes]
+        self.conv_layers  = [ConvLayer((5,5,3,16), (1,1,1,1), (1,2,2,1), (1,2,2,1)),
+                             ConvLayer((5,5,16,32),(1,1,1,1),(1,2,2,1),(1,2,2,1))]
+        self.fc_layers    = [256, self.classes]
 
         #dataset
         (x_train, y_train), (x_test, y_test) = cifar10.load_data()
@@ -24,8 +24,8 @@ class Conf:
         self.y_train = y_train[0:training_size]
 
         #parameter
-        self.batch_size = 64
-        self.learning_rate_base = 0.1
+        self.batch_size = 16
+        self.learning_rate_base = 0.01
         self.learning_rate_decay = 0.99
         self.regularization_rate = 0.00001
         self.training_epochs = 10000
