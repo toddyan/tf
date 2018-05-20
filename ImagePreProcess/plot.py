@@ -1,0 +1,90 @@
+import tensorflow as tf
+import matplotlib.pyplot as plt
+image_raw_data = tf.gfile.FastGFile("/Users/yxd/Downloads/flower_photos/roses/12240303_80d87f77a3_n.jpg",'r').read()
+with tf.Session() as s:
+    image = tf.image.decode_jpeg(image_raw_data)
+    image = tf.image.convert_image_dtype(image,dtype=tf.float32)
+    image_data = s.run(image)
+    print(image_data)
+    #plt.imshow(image_data)
+    #plt.show()
+    method=0
+    resized = tf.image.resize_images(image, [600,600], method=method)
+    image_data = s.run(resized)
+    plt.subplot(2,5,method+1)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title(method)
+
+    croped = tf.image.resize_image_with_crop_or_pad(image, 128, 128)
+    image_data = s.run(croped)
+    plt.subplot(2,5,2)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title("croped")
+
+    padding = tf.image.resize_image_with_crop_or_pad(image, 600, 600)
+    image_data = s.run(padding)
+    plt.subplot(2,5,3)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title("padding")
+
+    central_crop = tf.image.central_crop(image, 0.5)
+    image_data = s.run(central_crop)
+    plt.subplot(2,5,4)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title("central_crop")
+
+    fliped = tf.image.random_flip_left_right(image)
+    image_data = s.run(fliped)
+    plt.subplot(2,5,5)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title('random_flip')
+
+    brighted = tf.image.random_brightness(image,max_delta=0.5)
+    image_data = s.run(brighted)
+    plt.subplot(2,5,6)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title('brighted')
+
+    normed = tf.image.per_image_standardization(image)
+    image_data = s.run(normed)
+    plt.subplot(2,5,7)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title('standard')
+
+    fake_batch = tf.expand_dims(image,axis=0)
+    boxes = tf.constant([[[0.05,0.05,0.9,0.7],[0.35,0.47,0.5,0.56]]])
+
+    result = tf.image.draw_bounding_boxes(fake_batch, boxes)
+    result = s.run(result)
+    image_data = result[0]
+    plt.subplot(2,5,8)
+    plt.imshow(image_data)
+    plt.axis('off')
+    plt.title('bound')
+
+    # at least covert 40% of one bounding box
+    begin, size, bbox = tf.image.sample_distorted_bounding_box(tf.shape(image),bounding_boxes=boxes,min_object_covered=0.4)
+    print(s.run([begin,size,bbox]))
+    boxed_image = tf.image.draw_bounding_boxes(fake_batch, bbox)
+    distorted_image = tf.slice(image, begin, size)
+    image_data1 = s.run(boxed_image)[0]
+    image_data2 = s.run(distorted_image)
+    print(image_data1.shape)
+    print(image_data2.shape)
+    plt.subplot(2,5,9)
+    plt.imshow(image_data1)
+    plt.axis('off')
+    plt.title('bound')
+    plt.subplot(2,5,10)
+    plt.imshow(image_data2)
+    plt.axis('off')
+    plt.title('distorted')
+
+    plt.show()
