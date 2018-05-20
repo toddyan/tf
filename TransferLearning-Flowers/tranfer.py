@@ -32,11 +32,11 @@ def get_trainable_variables(trainable_scopes):
 
 def main(argv=None):
     input_data = '/Users/yxd/Downloads/flower_photos.npy'
-    save_model_path = 'E:/tmp/flower_model'
+    save_model_path = '/tmp/flower_model'
     # download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz
     ckpt_file = '/Users/yxd/Downloads/inception_v3.ckpt'
 
-    learning_rate = 0.0001
+    learning_rate = 0.00001
     epochs = 10
     batch_size = 32
     classes = 5
@@ -55,12 +55,12 @@ def main(argv=None):
             else:
                 print(str(v2))
     npy_data = np.load(input_data)
-    training_iamges = np.array(npy_data[0][0:100])
-    training_labels = np.array(npy_data[1][0:100])
-    validation_images = np.array(npy_data[2][0:100])
-    validation_labels = np.array(npy_data[3][0:100])
-    testing_images = np.array(npy_data[4][0:100])
-    testing_labels = np.array(npy_data[5][0:100])
+    training_iamges = np.array(npy_data[0])
+    training_labels = np.array(npy_data[1])
+    validation_images = np.array(npy_data[2])
+    validation_labels = np.array(npy_data[3])
+    testing_images = np.array(npy_data[4])
+    testing_labels = np.array(npy_data[5])
     n_training = len(training_iamges)
     print(np.array(training_iamges).shape)
     print(validation_images.shape)
@@ -100,7 +100,7 @@ def main(argv=None):
                 global_step += 1
                 start = end
                 print("step " + str(global_step))
-                if global_step%10==0:
+                if global_step%5==0:
                     saver.save(s, save_model_path, global_step=global_step)
                     validation_acc = s.run(acc, feed_dict={images:validation_images,labels:validation_labels})
                     print("step %d:validation acc %f" % (global_step, validation_acc))
