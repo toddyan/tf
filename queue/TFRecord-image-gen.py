@@ -1,10 +1,8 @@
 import numpy as np
 import tensorflow as tf
 from keras.datasets import mnist
-(x1,y1),(x2,y2) = mnist.load_data()
-save_path="/tmp/mnist_tfrecord"
-writer = tf.python_io.TFRecordWriter(save_path)
-for (x,y) in zip(x1,y1):
+
+def serialize(x,y):
     image = x.tostring()
     height = 28
     weight = 28
@@ -16,5 +14,17 @@ for (x,y) in zip(x1,y1):
         'weight': tf.train.Feature(int64_list=tf.train.Int64List(value=[weight])),
         'channel': tf.train.Feature(int64_list=tf.train.Int64List(value=[channel]))
     }))
-    writer.write(example.SerializeToString())
+    return example.SerializeToString()
+
+(x1,y1),(x2,y2) = mnist.load_data()
+save_path="/tmp/mnist_tfrecord"
+writer = tf.python_io.TFRecordWriter(save_path)
+for (x,y) in zip(x1,y1):
+    writer.write(serialize(x,y))
+writer.close()
+
+save_path="/tmp/mnist-tfrecord-test"
+writer = tf.python_io.TFRecordWriter(save_path)
+for (x,y) in zip(x2,y2):
+    writer.write(serialize(x,y))
 writer.close()
