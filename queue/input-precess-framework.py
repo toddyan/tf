@@ -61,7 +61,8 @@ image_batch, label_batch = tf.train.shuffle_batch(
     [image, label],
     batch_size=batch_size,
     capacity=capacity,
-    min_after_dequeue=min_after_dequeue
+    min_after_dequeue=min_after_dequeue,
+    num_threads=2
 )
 
 logits = infer.infer(Conf(), image_batch, True, None)
