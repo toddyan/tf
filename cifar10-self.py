@@ -12,12 +12,12 @@ Y_valid = Y_train[TrainingSize:]
 X_train = X_train[0:TrainingSize]
 Y_train = Y_train[0:TrainingSize]
 
-print X_train.shape
-print Y_train.shape
-print X_valid.shape
-print Y_valid.shape
-print X_test.shape
-print Y_test.shape
+print(X_train.shape)
+print(Y_train.shape)
+print(X_valid.shape)
+print(Y_valid.shape)
+print(X_test.shape)
+print(Y_test.shape)
 
 X = tf.placeholder(tf.float32,shape=(None,3072))
 Y = tf.placeholder(tf.float32,shape=(None,10))
