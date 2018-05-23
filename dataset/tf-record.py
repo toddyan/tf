@@ -20,9 +20,10 @@ def parse(record):
     image = tf.image.grayscale_to_rgb(image)
     return image, label
 
-method = 1
+method = 2
 if method == 1:
-    input_files = ['/tmp/mnist_tfrecord']
+    #input_files = ['/tmp/mnist_tfrecord']
+    input_files = ['E:/tmp/mnist_tfrecord']
     dataset = tf.data.TFRecordDataset(input_files)
     dataset = dataset.map(parse)
     iterator = dataset.make_one_shot_iterator()
@@ -45,7 +46,8 @@ elif method == 2:
     image, label = iterator.get_next()
     with tf.Session() as s:
         s.run([tf.global_variables_initializer(), iterator.initializer],
-              feed_dict={input_files: ['/tmp/mnist_tfrecord']})
+              #feed_dict={input_files: ['/tmp/mnist_tfrecord']})
+              feed_dict={input_files: ['E:/tmp/mnist_tfrecord']})
         while True:
             try:
                 img, lbl = s.run([image, label])

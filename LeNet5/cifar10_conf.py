@@ -30,7 +30,8 @@ class Conf:
         self.regularization_rate = 0.00001
         self.training_epochs = 10000
         self.moving_average_decay = 0.99
-        self.model_savepath = "/tmp/tf/cifar10"
+        #self.model_savepath = "/tmp/tf/cifar10"
+        self.model_savepath = "D:/code/model"
         self.model_name = "cifar10.ckpt"
 
 

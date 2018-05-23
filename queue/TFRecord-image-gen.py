@@ -17,13 +17,15 @@ def serialize(x,y):
     return example.SerializeToString()
 
 (x1,y1),(x2,y2) = mnist.load_data()
-save_path="/tmp/mnist_tfrecord"
+#save_path="/tmp/mnist_tfrecord"
+save_path="E:/tmp/mnist_tfrecord"
 writer = tf.python_io.TFRecordWriter(save_path)
 for (x,y) in zip(x1,y1):
     writer.write(serialize(x,y))
 writer.close()
 
-save_path="/tmp/mnist-tfrecord-test"
+#save_path="/tmp/mnist-tfrecord-test"
+save_path="E:/tmp/mnist_tfrecord-test"
 writer = tf.python_io.TFRecordWriter(save_path)
 for (x,y) in zip(x2,y2):
     writer.write(serialize(x,y))

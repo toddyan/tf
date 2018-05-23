@@ -3,7 +3,7 @@ import time
 import infer
 from cifar10_conf import Conf
 
-interval = 5
+interval = 15
 def evaluate(c):
     with tf.Graph().as_default() as g:
         x = tf.placeholder(tf.float32, (None, ) + c.image_shape,  name="input-x")
@@ -14,7 +14,7 @@ def evaluate(c):
         acc = tf.reduce_mean(tf.cast(acc_count,tf.float32))
         name_map = tf.train.ExponentialMovingAverage(c.moving_average_decay).variables_to_restore()
         for k,v in name_map.items():
-            print "\trestore: " + str(k) + " -> " + str(v)
+            print ("\trestore: " + str(k) + " -> " + str(v))
         saver = tf.train.Saver(name_map) #use moving average parameter
         #saver = tf.train.Saver()
         while True:
