@@ -5,7 +5,7 @@ N = [784,500,10]
 
 def get_weight_variable(shape, regularizer):
     w = tf.get_variable("w", shape=shape, initializer=tf.truncated_normal_initializer(stddev=0.1,dtype=tf.float32))
-    print w
+    print(w)
     if regularizer != None:
         tf.add_to_collection("loss",regularizer(w))
     return w

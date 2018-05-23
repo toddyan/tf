@@ -16,7 +16,7 @@ def evaluate(x_valid, y_valid):
         acc = tf.reduce_mean(tf.cast(acc_count,tf.float32))
         name_map = tf.train.ExponentialMovingAverage(mnist_train.moving_average_decay).variables_to_restore()
         for k,v in name_map.items():
-            print "\trestore: " + str(k) + " -> " + str(v)
+            print("\trestore: " + str(k) + " -> " + str(v))
         #saver = tf.train.Saver(name_map) #use moving average parameter
         saver = tf.train.Saver()
         while True:
