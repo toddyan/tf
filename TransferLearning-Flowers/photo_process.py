@@ -19,7 +19,7 @@ def create_image_lists(s, input_dir, valid_rate, test_rate):
     testing_labels = []
     label = 0
     for dir in sub_dirs:
-        print dir
+        print(dir)
         files = []
         dir_name = os.path.basename(dir)
         for ext in extensions:
@@ -49,14 +49,17 @@ def create_image_lists(s, input_dir, valid_rate, test_rate):
     return np.asarray([training_images,training_labels,validation_images,validation_labels,testing_iamges,testing_labels])
 def main(argv=None):
     # http://download.tensorflow.org/example_images/flower_photos.tgz
-    input_dir = '/Users/yxd/Downloads/flower_photos'
-    output_path = '/Users/yxd/Downloads/flower_photos.npy'
+    #input_dir = '/Users/yxd/Downloads/flower_photos'
+    #output_path = '/Users/yxd/Downloads/flower_photos.npy'
+    input_dir = 'E:/Download/flower_photos'
+    output_path = 'E:/Download/flower_photos.npy'
     valid_rate = 0.1
     test_rate = 0.1
-    with tf.Session() as s:
-        data = create_image_lists(s, input_dir, valid_rate, test_rate)
-        print data.shape
-        np.save(output_path, data)
+    with tf.device('/cpu:0'):
+        with tf.Session() as s:
+            data = create_image_lists(s, input_dir, valid_rate, test_rate)
+            print(data.shape)
+            np.save(output_path, data)
 
 if __name__ == "__main__":
     tf.app.run()
