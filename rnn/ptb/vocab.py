@@ -3,8 +3,13 @@ import collections
 from operator import itemgetter
 #http://www.fit.vutbr.cz/~imikolov/rnnlm/simple-examples.tgz
 
+'''
 raw_data = "/Users/yxd/Downloads/simple-examples/data/ptb.train.txt"
 vocab = "/Users/yxd/Downloads/simple-examples/data/vocab"
+'''
+
+raw_data = "E:/Download/simple-examples/data/ptb.train.txt"
+vocab = "E:/Download/simple-examples/data/vocab"
 
 counter = collections.Counter()
 with codecs.open(raw_data, 'r', 'utf-8') as f:

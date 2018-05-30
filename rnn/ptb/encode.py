@@ -3,11 +3,15 @@ import sys
 
 def get_word_code(word, dict):
     return str(dict[word]) if word in dict else str(dict['<unk>'])
-
+'''
 raw_data = "/Users/yxd/Downloads/simple-examples/data/ptb.train.txt"
 vocab = "/Users/yxd/Downloads/simple-examples/data/vocab"
 out_data = "/Users/yxd/Downloads/simple-examples/data/ptb.train.code"
+'''
 
+raw_data = "E:/Download/simple-examples/data/ptb.test.txt"
+vocab = "E:/Download/simple-examples/data/vocab"
+out_data = "E:/Download/simple-examples/data/ptb.test.code"
 
 with codecs.open(vocab, 'r', 'utf-8') as f:
     vocab = [w.strip() for w in f.readlines()]
