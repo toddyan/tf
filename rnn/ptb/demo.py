@@ -40,7 +40,7 @@ class PTBModel(object):
         outputs = [] #timestep, batch, hidden_size
         state = self.initial_state
         with tf.variable_scope("RNN"):
-            for step in range(TIMESTEP):
+            for step in range(timestep):
                 if step>0:tf.get_variable_scope().reuse_variables()
                 cell_output, state = cells(inputs=inputs[:,step,:],state=state)
                 outputs.append(cell_output)
@@ -72,16 +72,35 @@ class PTBModel(object):
         self.cost = tf.reduce_mean(loss) / batch_size
         self.final_state = state
 
-        if not is_training or True: return
+        if not is_training : return
 
         trainable_variables = tf.trainable_variables()
-        grads, _ = tf.clip_by_norm(
-            t = tf.gradients(self.cost, trainable_variables),
+        grads, _ = tf.clip_by_global_norm(
+            t_list = tf.gradients(self.cost, trainable_variables),
             clip_norm=MAX_GRAD_NORM
         ) #[#trainable_variables]
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=1.0)
         self.optimizer = optimizer.apply_gradients(zip(grads, trainable_variables))
 
+def run_epoch(session, model, batches, optimizer, logging, step):
+    total_cost = 0.0
+    iters = 0
+    state = session.run(model.initial_state)
+    for x, y in batches:
+        cost, state, _ = session.run(
+            [model.cost, model.final_state, optimizer],
+            feed_dict={
+                model.input: x, # shape=(batch_size, timestep)
+                model.target: y, # shape=(batch_size, timestep)
+                model.initial_state: state
+            }
+        )
+        total_cost += cost
+        iters += model.timestep
+        if logging and step % 100 == 0:
+            print("step %d, perplexity=%.3f" % (step, np.exp(total_cost/iters)))
+        step += 1
+    return step, np.exp(total_cost/iters)
 
 def main():
     initializer = tf.random_uniform_initializer(minval=-0.05, maxval=0.05)
