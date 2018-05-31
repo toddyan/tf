@@ -1,8 +1,7 @@
 import numpy as np
 import tensorflow as tf
-train_data = "/Users/yxd/Downloads/simple-examples/data/ptb.train.code"
-valid_data = "/Users/yxd/Downloads/simple-examples/data/ptb.valid.code"
-test_data = "/Users/yxd/Downloads/simple-examples/data/ptb.test.code"
+import codecs
+
 
 HIDDEN_SIZE = 300
 NUM_LAYERS = 2
@@ -71,9 +70,7 @@ class PTBModel(object):
         )
         self.cost = tf.reduce_mean(loss) / batch_size
         self.final_state = state
-
         if not is_training : return
-
         trainable_variables = tf.trainable_variables()
         grads, _ = tf.clip_by_global_norm(
             t_list = tf.gradients(self.cost, trainable_variables),
@@ -81,7 +78,6 @@ class PTBModel(object):
         ) #[#trainable_variables]
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=1.0)
         self.optimizer = optimizer.apply_gradients(zip(grads, trainable_variables))
-
 def run_epoch(session, model, batches, optimizer, logging, step):
     total_cost = 0.0
     iters = 0
@@ -101,13 +97,38 @@ def run_epoch(session, model, batches, optimizer, logging, step):
             print("step %d, perplexity=%.3f" % (step, np.exp(total_cost/iters)))
         step += 1
     return step, np.exp(total_cost/iters)
-
+def read_data(file):
+    with codecs.open(file, 'r', 'utf-8') as f:
+        total = ' '.join([line.strip() for line in f.readlines()])
+    return [int(w) for w in total.split()]
+def make_batch(id_list, batch_size, timestep):
+    num_batches = (len(id_list)-1) // (batch_size*timestep)
+    data = np.reshape(
+        np.array(id_list[:num_batches*batch_size*timestep]),
+        [batch_size, num_batches*timestep]
+    )
+    #split [batch_size, num_batches*timestep] into num_batches * [batch_size, timestep]
+    data_batches = np.split(data, num_batches, axis=1)
+    label = np.reshape(
+        np.array(id_list[1:num_batches*batch_size*timestep+1]),
+        [batch_size, num_batches*timestep]
+    )
+    label_batches = np.split(label, num_batches, axis=1)
+    return list(zip(data_batches,label_batches))
 def main():
+    train_data = "/Users/yxd/Downloads/simple-examples/data/ptb.train.code"
+    valid_data = "/Users/yxd/Downloads/simple-examples/data/ptb.valid.code"
+    test_data = "/Users/yxd/Downloads/simple-examples/data/ptb.test.code"
+    train_id_list = read_data(train_data)
+    valid_id_list = read_data(valid_data)
+    test_id_list  = read_data(test_data)
+
     initializer = tf.random_uniform_initializer(minval=-0.05, maxval=0.05)
     with tf.variable_scope("language_model",reuse=None, initializer=initializer):
         train_model = PTBModel(True, BATCH_SIZE, TIMESTEP)
     with tf.variable_scope("language_model",reuse=True, initializer=initializer):
         eval_model = PTBModel(False, 1, 1)
+
 
 if __name__ == "__main__":
     main()
