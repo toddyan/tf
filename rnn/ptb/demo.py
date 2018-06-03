@@ -2,18 +2,15 @@ import numpy as np
 import tensorflow as tf
 import codecs
 
-
-HIDDEN_SIZE = 300
+HIDDEN_SIZE = 100
 NUM_LAYERS = 2
 VOCAB_SIZE = 10000
-BATCH_SIZE = 20
-TIMESTEP = 35
 
-EPOCHS = 5
-LSTM_KEEP_PROB = 0.9
-INPUT_KEEP_PROB = 0.9
+LSTM_KEEP_PROB = 0.9999
+INPUT_KEEP_PROB = 0.9999
 MAX_GRAD_NORM = 5
 SHARE_EMB_SOFTMAX = True
+
 
 class PTBModel(object):
     def __init__(self, is_training, batch_size, timestep):
@@ -76,7 +73,9 @@ class PTBModel(object):
             t_list = tf.gradients(self.cost, trainable_variables),
             clip_norm=MAX_GRAD_NORM
         ) #[#trainable_variables]
+        self.grads = grads #debug
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=1.0)
+        #optimizer = tf.train.AdagradOptimizer(learning_rate=1.0)
         self.optimizer = optimizer.apply_gradients(zip(grads, trainable_variables))
 def run_epoch(session, model, batches, optimizer, logging, step):
     total_cost = 0.0
@@ -91,11 +90,20 @@ def run_epoch(session, model, batches, optimizer, logging, step):
                 model.initial_state: state
             }
         )
+        grads = session.run(model.grads,feed_dict={
+                model.input: x, # shape=(batch_size, timestep)
+                model.target: y, # shape=(batch_size, timestep)
+                model.initial_state: state
+            })
+        print(grads)
         total_cost += cost
         iters += model.timestep
-        if logging and step % 100 == 0:
+        print("step %d, cost=%.3f" % (step, cost))
+        if logging and step % 5 == 0:
             print("step %d, perplexity=%.3f" % (step, np.exp(total_cost/iters)))
+            #print("step %d, perplexity=%.3f" % (step, total_cost / iters))
         step += 1
+    #return step, total_cost/iters
     return step, np.exp(total_cost/iters)
 def read_data(file):
     with codecs.open(file, 'r', 'utf-8') as f:
@@ -119,16 +127,33 @@ def main():
     train_data = "/Users/yxd/Downloads/simple-examples/data/ptb.train.code"
     valid_data = "/Users/yxd/Downloads/simple-examples/data/ptb.valid.code"
     test_data = "/Users/yxd/Downloads/simple-examples/data/ptb.test.code"
-    train_id_list = read_data(train_data)
-    valid_id_list = read_data(valid_data)
-    test_id_list  = read_data(test_data)
+
+    BATCH_SIZE = 20
+    TIMESTEP = 35
+
+    EPOCHS = 5
+
 
     initializer = tf.random_uniform_initializer(minval=-0.05, maxval=0.05)
     with tf.variable_scope("language_model",reuse=None, initializer=initializer):
         train_model = PTBModel(True, BATCH_SIZE, TIMESTEP)
-    with tf.variable_scope("language_model",reuse=True, initializer=initializer):
-        eval_model = PTBModel(False, 1, 1)
+    #with tf.variable_scope("language_model",reuse=True, initializer=initializer):
+        #eval_model = PTBModel(False, 1, 1)
 
+    with tf.Session() as s:
+        tf.global_variables_initializer().run()
+        train_batches = make_batch(read_data(train_data),BATCH_SIZE,TIMESTEP)
+        valid_batches = make_batch(read_data(valid_data),1,1)
+        test_batches  = make_batch(read_data(test_data),1,1)
+        step = 0
+        for i in range(EPOCHS):
+            print("Inter %d" % (i+1))
+            step, pplx = run_epoch(s,train_model,train_batches,train_model.optimizer,True,step)
+            print("train perplexity:%.3f" % pplx)
+            #_, pplx = run_epoch(s,eval_model,valid_batches,tf.no_op(),False,0)
+            #print("valid perplexity:%.3f" % pplx)
+        #_, pplx = run_epoch(s, eval_model, test_batches, tf.no_op(), False, 0)
+        #print("test perplexity:%.3f" % pplx)
 
 if __name__ == "__main__":
     main()
