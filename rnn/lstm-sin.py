@@ -78,7 +78,7 @@ test_start = (TRAINING_EXAMPLES + TIMESTEPS) * SAMPLE_GAP
 test_end = test_start + (TESTING_EXAMPLES + TIMESTEPS) * SAMPLE_GAP
 seq = np.linspace(0, test_start, TRAINING_EXAMPLES + TIMESTEPS, dtype=np.float32)
 train_X, train_Y = gen_data(np.sin(seq)**2*2+np.cos(seq))
-np.linspace(test_start, test_end, TESTING_EXAMPLES + TIMESTEPS, dtype=np.float32)
+seq = np.linspace(test_start, test_end, TESTING_EXAMPLES + TIMESTEPS, dtype=np.float32)
 test_X, test_Y = gen_data(np.sin(seq)**2*2+np.cos(seq))
 
 with tf.Session() as s:

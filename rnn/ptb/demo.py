@@ -135,9 +135,9 @@ def main():
     valid_data = "/Users/yxd/Downloads/simple-examples/data/ptb.valid.code"
     test_data = "/Users/yxd/Downloads/simple-examples/data/ptb.test.code"
 
-    train_data = "E:/Download/simple-examples/data/ptb.train.code"
-    valid_data = "E:/Download/simple-examples/data/ptb.valid.code"
-    test_data = "E:/Download/simple-examples/data/ptb.test.code"
+    # train_data = "E:/Download/simple-examples/data/ptb.train.code"
+    # valid_data = "E:/Download/simple-examples/data/ptb.valid.code"
+    # test_data = "E:/Download/simple-examples/data/ptb.test.code"
 
     BATCH_SIZE = 30
     TIMESTEP = 35
@@ -145,7 +145,7 @@ def main():
     EPOCHS = 5
 
 
-    initializer = tf.random_uniform_initializer(minval=0.05, maxval=0.15)
+    initializer = tf.random_uniform_initializer(minval=-0.05, maxval=0.05)
     with tf.variable_scope("language_model",reuse=None, initializer=initializer):
         train_model = PTBModel(True, BATCH_SIZE, TIMESTEP)
     with tf.variable_scope("language_model",reuse=True, initializer=initializer):
