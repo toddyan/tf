@@ -2,12 +2,12 @@ import numpy as np
 import tensorflow as tf
 import codecs
 
-HIDDEN_SIZE = 100
+HIDDEN_SIZE = 300
 NUM_LAYERS = 2
 VOCAB_SIZE = 10000
 
-LSTM_KEEP_PROB = 0.9999
-INPUT_KEEP_PROB = 0.9999
+LSTM_KEEP_PROB = 0.9
+INPUT_KEEP_PROB = 0.9
 MAX_GRAD_NORM = 5
 SHARE_EMB_SOFTMAX = True
 
@@ -65,8 +65,14 @@ class PTBModel(object):
             labels=tf.reshape(tensor=self.target, shape=(-1,)),
             logits=logits
         )
-        self.cost = tf.reduce_mean(loss) / batch_size
+        self.cost = tf.reduce_sum(loss) / batch_size
         self.final_state = state
+        self.acc = tf.reduce_mean(
+            tf.cast(tf.equal(
+                tf.reshape(tensor=self.target,shape=(-1,)),
+                tf.argmax(logits,axis=1,output_type=tf.int32)
+            ), dtype=tf.float32)
+        )
         if not is_training : return
         trainable_variables = tf.trainable_variables()
         grads, _ = tf.clip_by_global_norm(
@@ -81,6 +87,7 @@ def run_epoch(session, model, batches, optimizer, logging, step):
     total_cost = 0.0
     iters = 0
     state = session.run(model.initial_state)
+    accs = []
     for x, y in batches:
         cost, state, _ = session.run(
             [model.cost, model.final_state, optimizer],
@@ -90,21 +97,21 @@ def run_epoch(session, model, batches, optimizer, logging, step):
                 model.initial_state: state
             }
         )
-        grads = session.run(model.grads,feed_dict={
+        acc = session.run(model.acc,feed_dict={
                 model.input: x, # shape=(batch_size, timestep)
                 model.target: y, # shape=(batch_size, timestep)
                 model.initial_state: state
             })
-        print(grads)
+        accs.append(acc)
         total_cost += cost
         iters += model.timestep
-        print("step %d, cost=%.3f" % (step, cost))
-        if logging and step % 5 == 0:
-            print("step %d, perplexity=%.3f" % (step, np.exp(total_cost/iters)))
+        #print("step %d, cost=%.3f, acc=%.3f" % (step, cost/model.timestep, acc))
+        if logging and step % 50 == 0:
+            print("step %d, perplexity=%.3f, acc=%.3f" % (step, np.exp(total_cost/iters),acc))
             #print("step %d, perplexity=%.3f" % (step, total_cost / iters))
         step += 1
     #return step, total_cost/iters
-    return step, np.exp(total_cost/iters)
+    return step, np.exp(total_cost/iters), np.mean(np.array(accs))
 def read_data(file):
     with codecs.open(file, 'r', 'utf-8') as f:
         total = ' '.join([line.strip() for line in f.readlines()])
@@ -128,17 +135,21 @@ def main():
     valid_data = "/Users/yxd/Downloads/simple-examples/data/ptb.valid.code"
     test_data = "/Users/yxd/Downloads/simple-examples/data/ptb.test.code"
 
-    BATCH_SIZE = 20
+    train_data = "E:/Download/simple-examples/data/ptb.train.code"
+    valid_data = "E:/Download/simple-examples/data/ptb.valid.code"
+    test_data = "E:/Download/simple-examples/data/ptb.test.code"
+
+    BATCH_SIZE = 30
     TIMESTEP = 35
 
     EPOCHS = 5
 
 
-    initializer = tf.random_uniform_initializer(minval=-0.05, maxval=0.05)
+    initializer = tf.random_uniform_initializer(minval=0.05, maxval=0.15)
     with tf.variable_scope("language_model",reuse=None, initializer=initializer):
         train_model = PTBModel(True, BATCH_SIZE, TIMESTEP)
-    #with tf.variable_scope("language_model",reuse=True, initializer=initializer):
-        #eval_model = PTBModel(False, 1, 1)
+    with tf.variable_scope("language_model",reuse=True, initializer=initializer):
+        eval_model = PTBModel(False, 1, 1)
 
     with tf.Session() as s:
         tf.global_variables_initializer().run()
@@ -147,13 +158,13 @@ def main():
         test_batches  = make_batch(read_data(test_data),1,1)
         step = 0
         for i in range(EPOCHS):
-            print("Inter %d" % (i+1))
-            step, pplx = run_epoch(s,train_model,train_batches,train_model.optimizer,True,step)
-            print("train perplexity:%.3f" % pplx)
-            #_, pplx = run_epoch(s,eval_model,valid_batches,tf.no_op(),False,0)
-            #print("valid perplexity:%.3f" % pplx)
-        #_, pplx = run_epoch(s, eval_model, test_batches, tf.no_op(), False, 0)
-        #print("test perplexity:%.3f" % pplx)
+            print("Iter %d" % (i+1))
+            step, pplx, acc = run_epoch(s,train_model,train_batches,train_model.optimizer,True,step)
+            print("train perplexity:%.3f, acc:%.3f" % (pplx,acc))
+            _, pplx, acc = run_epoch(s,eval_model,valid_batches,tf.no_op(),False,0)
+            print("valid perplexity:%.3f, acc:%.3f" % (pplx, acc))
+        _, pplx, acc = run_epoch(s, eval_model, test_batches, tf.no_op(), False, 0)
+        print("test perplexity:%.3f, acc:%.3f" % (pplx, acc))
 
 if __name__ == "__main__":
     main()
