@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import codecs
 import collections
 from operator import itemgetter
+
 
 # https://wit3.fbk.eu/mt.php?release=2015-01
 # https://github.com/moses-smt/mosesdecoder/blob/master/scripts/tokenizer/tokenizer.perl
@@ -9,7 +11,9 @@ from operator import itemgetter
 # ./mosesdecoder/scripts/tokenizer/tokenizer.perl -no-escape -l en <train.tags.en-zh.en >train.txt.en
 # sed 's/ //g; s/\B/ /g; s/[,.?;:\'"!@#$%^&*\(\)_+=\[\]{}<>-]/ /g; s/，/ ， /g; s/。/ 。 /g; s/？/ ？ /g; s/：/ ： /g; s/“/ “ /g; s/”/ ” /g; s/（/ （ /g; s/）/ ） /g ' ./train.tags.en-zh.zh >train.txt.zh
 
+
 DATA_ROOT="E:/Download/en-zh/"
+DATA_ROOT="/Users/yxd/Downloads/en-zh/"
 EN_VOCAB_SIZE = 10000
 ZH_VOCAB_SIZE = 4000
 
@@ -22,10 +26,10 @@ with codecs.open(DATA_ROOT+"train.tags.en-zh.zh",'r','utf-8') as f:
         seperated_file.write(s + "\n")
 seperated_file.close()
 
-sep_datas = [DATA_ROOT+"train.txt.en",DATA_ROOT+"train.txt.zh"]
-vocab_datas = [DATA_ROOT+"train.vocab.en",DATA_ROOT+"train.vocab.zh"]
-for (data_file,vocab_file) in zip(sep_datas, vocab_datas):
-    print(data_file,vocab_file)
+tasks=[(DATA_ROOT+"train.txt.en",DATA_ROOT+"train.vocab.en",EN_VOCAB_SIZE),
+       (DATA_ROOT+"train.txt.zh",DATA_ROOT+"train.vocab.zh",ZH_VOCAB_SIZE)]
+for (data_file,vocab_file,limit) in tasks:
+    print(data_file,vocab_file,limit)
     counter = collections.Counter()
     with codecs.open(data_file, 'r', 'utf-8') as f:
         for line in f:
@@ -36,8 +40,8 @@ for (data_file,vocab_file) in zip(sep_datas, vocab_datas):
     sorted_word = ['<sos>','<eos>'] + sorted_word
     print(len(sorted_word))
     print(sorted_word[0],sorted_word[-1])
-    if len(sorted_word) > 10000:
-        sorted_word = sorted_word[:10000]
+    if len(sorted_word) > limit:
+        sorted_word = sorted_word[:limit]
     with codecs.open(vocab_file, 'w', 'utf-8') as f:
         for word in sorted_word:
             f.write(word + "\n")
