@@ -10,6 +10,17 @@ from operator import itemgetter
 # sed 's/ //g; s/\B/ /g; s/[,.?;:\'"!@#$%^&*\(\)_+=\[\]{}<>-]/ /g; s/，/ ， /g; s/。/ 。 /g; s/？/ ？ /g; s/：/ ： /g; s/“/ “ /g; s/”/ ” /g; s/（/ （ /g; s/）/ ） /g ' ./train.tags.en-zh.zh >train.txt.zh
 
 DATA_ROOT="E:/Download/en-zh/"
+EN_VOCAB_SIZE = 10000
+ZH_VOCAB_SIZE = 4000
+
+seperated_file_path = DATA_ROOT + "train.txt.zh"
+seperated_file = codecs.open(seperated_file_path,'w','utf-8')
+with codecs.open(DATA_ROOT+"train.tags.en-zh.zh",'r','utf-8') as f:
+    for line in f:
+        line = line.strip()
+        s = ' '.join(line)
+        seperated_file.write(s + "\n")
+seperated_file.close()
 
 sep_datas = [DATA_ROOT+"train.txt.en",DATA_ROOT+"train.txt.zh"]
 vocab_datas = [DATA_ROOT+"train.vocab.en",DATA_ROOT+"train.vocab.zh"]
