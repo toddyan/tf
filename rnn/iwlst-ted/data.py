@@ -13,7 +13,7 @@ from operator import itemgetter
 
 
 DATA_ROOT="E:/Download/en-zh/"
-DATA_ROOT="/Users/yxd/Downloads/en-zh/"
+# DATA_ROOT="/Users/yxd/Downloads/en-zh/"
 EN_VOCAB_SIZE = 10000
 ZH_VOCAB_SIZE = 4000
 
@@ -37,7 +37,7 @@ for (data_file,vocab_file,limit) in tasks:
                 counter[word] += 1
     sorted_word = sorted(counter.items(),key=itemgetter(1),reverse=True)
     sorted_word = [e[0] for e in sorted_word]
-    sorted_word = ['<sos>','<eos>'] + sorted_word
+    sorted_word = ['<unk>','<sos>','<eos>'] + sorted_word
     print(len(sorted_word))
     print(sorted_word[0],sorted_word[-1])
     if len(sorted_word) > limit:
