@@ -12,8 +12,8 @@ from operator import itemgetter
 # sed 's/ //g; s/\B/ /g; s/[,.?;:\'"!@#$%^&*\(\)_+=\[\]{}<>-]/ /g; s/，/ ， /g; s/。/ 。 /g; s/？/ ？ /g; s/：/ ： /g; s/“/ “ /g; s/”/ ” /g; s/（/ （ /g; s/）/ ） /g ' ./train.tags.en-zh.zh >train.txt.zh
 # line 204643 error word
 
-DATA_ROOT="E:/Download/en-zh/"
-# DATA_ROOT="/Users/yxd/Downloads/en-zh/"
+# DATA_ROOT="E:/Download/en-zh/"
+DATA_ROOT="/Users/yxd/Downloads/en-zh/"
 EN_VOCAB_SIZE = 10000
 ZH_VOCAB_SIZE = 4000
 
