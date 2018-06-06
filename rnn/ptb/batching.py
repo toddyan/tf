@@ -16,7 +16,7 @@ def make_batch(id_list, batch_size, timestep):
         np.array(id_list[:num_batches*batch_size*timestep]),
         [batch_size, num_batches*timestep]
     )
-    #split [batch_size, num_batches*timestep] into num_batches * [batch_size, timestep]
+    # split [batch_size, num_batches*timestep] into num_batches * [batch_size, timestep]
     data_batches = np.split(data, num_batches, axis=1)
 
     label = np.reshape(

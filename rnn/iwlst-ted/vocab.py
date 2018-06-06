@@ -10,7 +10,7 @@ from operator import itemgetter
 # git checkout HEAD scripts
 # ./mosesdecoder/scripts/tokenizer/tokenizer.perl -no-escape -l en <train.tags.en-zh.en >train.txt.en
 # sed 's/ //g; s/\B/ /g; s/[,.?;:\'"!@#$%^&*\(\)_+=\[\]{}<>-]/ /g; s/，/ ， /g; s/。/ 。 /g; s/？/ ？ /g; s/：/ ： /g; s/“/ “ /g; s/”/ ” /g; s/（/ （ /g; s/）/ ） /g ' ./train.tags.en-zh.zh >train.txt.zh
-
+# line 204643 error word
 
 DATA_ROOT="E:/Download/en-zh/"
 # DATA_ROOT="/Users/yxd/Downloads/en-zh/"
