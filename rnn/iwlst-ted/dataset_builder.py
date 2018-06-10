@@ -13,7 +13,7 @@ def MakeDataset(file_path):
 def MakeSrcTrgDataset(src_path, trg_path, batch_size):
     src_data = MakeDataset(src_path) # shape: [examples, (array[len], 1)]
     trg_data = MakeDataset(trg_path)
-    dataset = tf.data.Dataset.zip((src_data,trg_data)) # shape: [example, ((array[len1],1),(array[len2],2))]
+    dataset = tf.data.Dataset.zip((src_data,trg_data)) # shape: [example, ((array[len1],1),(array[len2],1))]
     def length_fiter(src_tuple, trg_tuple):
         ((src_input, src_len),(trg_label,trg_len)) = (src_tuple, trg_tuple)
         return tf.logical_and(
@@ -31,10 +31,11 @@ def MakeSrcTrgDataset(src_path, trg_path, batch_size):
         ((src_input, src_len),(trg_label,trg_len)) = (src_tuple, trg_tuple)
         trg_input = tf.concat([[SOS_ID], trg_label[:-1]], axis=0)
         return ((src_input, src_len),(trg_input, trg_label, trg_len))
-    dataset = dataset.map(dup_target_input)
+    dataset = dataset.map(dup_target_input) # shape: [example, ((array[len1],1),(array[len2],array[len2],1))]
     dataset = dataset.shuffle(10000)
     padding_shape = ((tf.TensorShape([None]), tf.TensorShape([])),
                      (tf.TensorShape([None]), tf.TensorShape([None]), tf.TensorShape([])))
+    # [example/batch, (([batch,len1],[batch]),([batch,len2],[batch,len2],[batch]))]
     dataset = dataset.padded_batch(batch_size, padding_shape)
     return dataset
 
