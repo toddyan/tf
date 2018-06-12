@@ -2,7 +2,8 @@
 import tensorflow as tf
 from databuilder import make_data
 
-ROOT = "E:/Download/tf/"
+# ROOT = "E:/Download/tf/"
+ROOT = "/Users/yxd/Downloads/tf/"
 train_path = ROOT + "train"
 valid_path = ROOT + "valid"
 HIDDEN_SIZE = 32
@@ -19,7 +20,7 @@ class Model():
             cell=self.cell,
             inputs=seq,
             sequence_length=size,
-            dtype=tf.int64
+            dtype=tf.float32
         )
         return outputs, states
 
@@ -42,4 +43,5 @@ if __name__ == "__main__":
     #     print(s.run([seq,size]))
     t1, t2 = m.get_updater(seq, size)
     with tf.Session() as s:
+        tf.global_variables_initializer().run()
         run_epoch(s, t1, t2, 0)

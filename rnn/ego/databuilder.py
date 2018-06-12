@@ -24,7 +24,7 @@ def make_data(file_path):
     dataset = tf.data.TextLineDataset(file_path)
     dataset = dataset.map(lambda line: tf.string_split([line]).values)
     dataset = dataset.map(lambda arr: (
-        tf.string_to_number(arr,out_type=tf.int64),
+        tf.string_to_number(arr,out_type=tf.float32),
         tf.size(arr)
     ))
     dataset = dataset.shuffle(100)
@@ -33,7 +33,8 @@ def make_data(file_path):
 
 
 if __name__ == "__main__":
-    ROOT="E:/Download/tf/"
+    # ROOT="E:/Download/tf/"
+    ROOT = "/Users/yxd/Downloads/tf/"
     train_path = ROOT + "train"
     valid_path = ROOT + "valid"
 
