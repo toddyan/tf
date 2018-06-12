@@ -49,7 +49,8 @@ if __name__ == "__main__":
         print(s.run([a0, a1, a2]))
         print("")
 
-    DATA_ROOT = "/Users/yxd/Downloads/en-zh/"
+    # DATA_ROOT = "/Users/yxd/Downloads/en-zh/"
+    DATA_ROOT = "E:/Download/en-zh/"
     src_path = DATA_ROOT + "train.code.en"
     trg_path = DATA_ROOT + "train.code.zh"
     batch_size = 3
