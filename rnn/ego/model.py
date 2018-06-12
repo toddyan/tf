@@ -6,7 +6,7 @@ from databuilder import make_data
 ROOT = "/Users/yxd/Downloads/tf/"
 train_path = ROOT + "train"
 valid_path = ROOT + "valid"
-HIDDEN_SIZE = 32
+HIDDEN_SIZE = 2
 
 
 
@@ -28,6 +28,7 @@ def run_epoch(s, t1, t2, step):
     while True:
         try:
             print(s.run([t1,t2]))
+            exit(1)
         except tf.errors.OutOfRangeError:
             break
 
