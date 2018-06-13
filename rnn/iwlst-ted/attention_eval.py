@@ -15,10 +15,14 @@ checkpoint_path = MODEL_ROOT + "att.ckpt"
 def main():
     with tf.variable_scope("att_nmt_model", reuse=None):
         model = AttentionNMTModel()
-    # "this is a test"
+    # "this is a test."
     test_sentence = [19, 13, 9, 709, 4, 2]
     # "who are you?"
     test_sentence = [83, 26, 14, 33, 2]
+    # "where are you?"
+    test_sentence = [109, 26, 14, 33, 2]
+    # "you are the apple in my eyes."
+    test_sentence = [14, 26, 5, 3658, 12, 52, 607, 4, 2]
     output_tensor = model.infer(test_sentence)
     with tf.Session() as s:
         saver = tf.train.Saver()
