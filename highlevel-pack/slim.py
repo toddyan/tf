@@ -46,9 +46,9 @@ def main():
     Y_train = (Y_train[:,np.newaxis] == np.arange(10)).astype(np.float32)
     Y_test = (Y_test[:, np.newaxis] == np.arange(10)).astype(np.float32)
     batch_size = 64
-    learnint_rate = 0.001
+    learnint_rate = 0.002
     epochs = 10
-    run_epoch(X_train, Y_train, learnint_rate, batch_size)
+    run_epoch(X_train, Y_train, learnint_rate, batch_size, epochs)
 
 if __name__ == "__main__":
     main()
