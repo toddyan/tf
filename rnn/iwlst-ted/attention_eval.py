@@ -33,7 +33,7 @@ def main():
             output = s.run(output_tensor)
             print(output)
         else:
-            print("Not CheckPoint file found.")
+            print("Not CheckPoint  file found.")
 
 
 if __name__ == "__main__":
