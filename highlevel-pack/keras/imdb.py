@@ -24,6 +24,6 @@ model.compile(
     loss=keras.losses.binary_crossentropy,
     metrics=['accuracy']
 )
-model.fit(X_train, Y_train, batch_size=batch_size, epochs=5, validation_data=(X_test,Y_test))
+model.fit(X_train, Y_train, batch_size=batch_size, epochs=1, validation_data=(X_test,Y_test))
 score = model.evaluate(X_test, Y_test, batch_size)
 print("loss,acc",score[0],score[1])
