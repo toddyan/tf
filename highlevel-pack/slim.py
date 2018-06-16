@@ -15,7 +15,7 @@ def LeNet5(input):
     return logits
 
 
-def run_epoch(X,Y,learnint_rate, batch_size):
+def run_epoch(X,Y,learnint_rate, batch_size, epochs):
     input = tf.placeholder(dtype=tf.float32, shape=[None, 784], name="input")
     output = tf.placeholder(dtype=tf.float32, shape=[None, 10], name="output")
     logits = LeNet5(input)
@@ -30,13 +30,14 @@ def run_epoch(X,Y,learnint_rate, batch_size):
     ), tf.float32))
     with tf.Session() as s:
         tf.global_variables_initializer().run()
-        start = 0
-        while start < X.shape[0]:
-            end = start+batch_size
-            acc, loss, _ = s.run([accuracy, cross_enytopy, optimizer], feed_dict={input:X[start:end],output:Y[start:end]})
-            #if(start/batch_size==10):
-            print(acc, loss)
-            start = end
+        for epoch in range(epochs):
+            start = 0
+            while start < X.shape[0]:
+                end = start+batch_size
+                acc, loss, _ = s.run([accuracy, cross_enytopy, optimizer], feed_dict={input:X[start:end],output:Y[start:end]})
+                #if(start/batch_size==10):
+                print(acc, loss)
+                start = end
 
 def main():
     (X_train,Y_train),(X_test,Y_test) = mnist.load_data()
@@ -46,8 +47,8 @@ def main():
     Y_test = (Y_test[:, np.newaxis] == np.arange(10)).astype(np.float32)
     batch_size = 64
     learnint_rate = 0.001
-    for epoch in range(10):
-        run_epoch(X_train, Y_train, learnint_rate, batch_size)
+    epochs = 10
+    run_epoch(X_train, Y_train, learnint_rate, batch_size)
 
 if __name__ == "__main__":
     main()
