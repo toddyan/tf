@@ -16,8 +16,8 @@ print(X_train.shape,Y_train.shape,X_test.shape,Y_test.shape)
 print(X_train[0],Y_train[0])
 
 model = keras.Sequential()
-model.add(keras.layers.Embedding(input_dim=max_word, output_dim=128))
-model.add(keras.layers.LSTM(units=128, activation='tanh', dropout=0.2, recurrent_dropout=0.2,))
+model.add(keras.layers.Embedding(input_dim=max_word, output_dim=256))
+model.add(keras.layers.LSTM(units=256, activation='tanh', dropout=0.2, recurrent_dropout=0.2,))
 model.add(keras.layers.Dense(units=1,activation='sigmoid'))
 model.compile(
     optimizer=keras.optimizers.Adam(),
