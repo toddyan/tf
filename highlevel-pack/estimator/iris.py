@@ -32,21 +32,33 @@ def input_fn(path, shuffle, repeat):
     def csv_decoder(line):
         parsed_line = tf.decode_csv(records=line, record_defaults=[[0.],[0.],[0.],[0.],[0]])
         # return parsed_line
-        return {"x":parsed_line[:-1]}
+        return {"x":tf.stack(parsed_line[:-1])},parsed_line[-1]
     dataset = tf.data.TextLineDataset(path).map(csv_decoder)
-    # if(shuffle): dataset = dataset.shuffle(buffer_size=1024)
-    # dataset = dataset.repeat(repeat).batch(32)
+    if(shuffle): dataset = dataset.shuffle(buffer_size=1024)
+    dataset = dataset.repeat(repeat).batch(8)
     iterator = dataset.make_one_shot_iterator()
     return iterator.get_next()
 
-t = input_fn(train_path, False, 1)
-with tf.Session() as s:
-    tf.global_variables_initializer().run()
-    while True:
-        try:
-            print(s.run(t))
-        except tf.errors.OutOfRangeError:
-            break
+###############################################
 # gen_data()
+# x,y = input_fn(train_path, True, 1)
+# with tf.Session() as s:
+#     tf.global_variables_initializer().run()
+#     while True:
+#         try:
+#             print(s.run([x,y]))
+#         except tf.errors.OutOfRangeError:
+#             break
+###############################################
 
-
+feature_columns = [tf.feature_column.numeric_column("x", shape=[4])]
+classifier = tf.estimator.DNNClassifier(
+    hidden_units=[10,10],
+    feature_columns=feature_columns,
+    model_dir=globalconf.get_root()+"estimator/iris/model",
+    n_classes=3
+)
+for epoch in range(100):
+    classifier.train(input_fn=lambda: input_fn(train_path,True,1))
+    result = classifier.evaluate(input_fn=lambda:input_fn(test_path,False,1))
+    print(result)
